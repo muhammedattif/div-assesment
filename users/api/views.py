@@ -33,6 +33,8 @@ class AuthToken(ObtainAuthToken):
             'phone_number': user.email
         })
 
+
+
 # Status Creation View
 class StatusCreateView(APIView):
 

@@ -7,7 +7,15 @@ from django.contrib.auth import get_user_model
 from datetime import date
 from django.conf import settings
 from .models import Status
+
 User = get_user_model()
+
+
+"""
+It is a Model serializer so the customization on the model Fields validators doesn't take effect.
+
+"""
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -81,29 +89,29 @@ class AuthTokenSerializer(serializers.Serializer):
         phone_number = attrs.get('phone_number')
         password = attrs.get('password')
 
-        if phone_number and password:
-            user = authenticate(phone_number=phone_number, password=password)
-
-            if user:
-                if not user.is_active:
-                    msg = 'User account is disabled.'
-                    raise serializers.ValidationError({
-                        'status': 'error',
-                        'message': msg
-                    })
-            else:
-                msg = 'Unable to log in with provided credentials.'
-                raise serializers.ValidationError({
-                    'status': 'error',
-                    'message': msg
-                })
-
-        else:
+        if not (phone_number or password):
             msg = 'Must include "phone_number" and "password"'
             raise serializers.ValidationError({
                 'status': 'error',
                 'message': msg
             })
+
+        user = authenticate(phone_number=phone_number, password=password)
+
+        if not user:
+            msg = 'Unable to log in with provided credentials.'
+            raise serializers.ValidationError({
+                'status': 'error',
+                'message': msg
+            })
+
+        if not user.is_active:
+            msg = 'User account is disabled.'
+            raise serializers.ValidationError({
+                'status': 'error',
+                'message': msg
+            })
+
 
         attrs['user'] = user
         return attrs

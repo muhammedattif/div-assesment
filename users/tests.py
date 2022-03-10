@@ -8,13 +8,19 @@ class UserTestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+
+        # HTTP_AUTHORIZATION in the header
         self.client.credentials(HTTP_AUTHORIZATION='Token ada7f3a9ce51edab5ad44478ffe3c5bd46cbf492')
+
         self.create_user_url = reverse('users-api:user-create')
         self.auth_token_url = reverse('users-api:auth-token')
         self.create_status_url = reverse('users-api:status-create')
 
 
     def test_create_user(self):
+
+        # read the image from the disk
+
         image = open('test.png')
         response = self.client.post(self.create_user_url, {
                 'phone_number': "+201020404058",
