@@ -74,7 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'country_code', 'gender', 'birth_date', 'avatar']
 
-    # resize profile image before saving
+    @transaction.atomic
     def save(self, created=None, *args, **kwargs):
         super().save(*args, **kwargs)
 

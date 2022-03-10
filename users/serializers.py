@@ -32,11 +32,13 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_first_name(self, first_name):
         if not first_name:
             raise serializers.ValidationError({'error': 'blank'})
+        return first_name
 
 
     def validate_last_name(self, last_name):
         if not last_name:
             raise serializers.ValidationError({'error': 'blank'})
+        return last_name
 
 
     # This validation vill not be invoked because I use Phone number field
@@ -48,18 +50,25 @@ class UserSerializer(serializers.ModelSerializer):
         if len(phone_number) <= 10:
             raise serializers.ValidationError({'error': 'too_short', 'count': len(phone_number)})
 
+        return phone_number
+
     def validate_birth_date(self, birth_date):
         today = date.today()
         if birth_date > today:
             raise serializers.ValidationError("This Birth date in the future.")
+        return birth_date
 
     def validate_avatar(self, avatar):
         if avatar.name.split('.')[-1].lower() not in settings.VALID_IMAGE_EXT:
             raise serializers.ValidationError("Invalid image type.")
 
+        return avatar
+
     def validate_email(self, email):
         if email and User.objects.filter(email=email).exists():
             raise serializers.ValidationError("A user with this email already exists.")
+
+        return email
 
 
 
